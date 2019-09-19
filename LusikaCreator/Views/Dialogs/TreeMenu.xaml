@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="TestApp.Views.Dialogs.TreeMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:helpers="clr-namespace:TestApp.ViewModels.Helpers"
+        xmlns:menu="clr-namespace:TestApp.ViewModels.Dialogs.Menu"
+        mc:Ignorable="d"
+        x:Name="This"
+        DataContext="{Binding ElementName=This, Path=ViewModel}"
+        Height="300" Width="300">
+
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Skins/MainSkin.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <HierarchicalDataTemplate DataType="{x:Type menu:DirectoryItem}" ItemsSource="{Binding Items}">
+
+                <DockPanel Dock="Right">
+                    <TextBlock
+                        Margin="0" VerticalAlignment="Center" TextAlignment="Justify" HorizontalAlignment="Stretch"
+                        Text="{Binding Path=Name}" ToolTip="{Binding Path=Path}">
+                    </TextBlock>
+                </DockPanel>
+                
+            </HierarchicalDataTemplate>
+
+            <!--ToolTip="{Binding Path=Path}"-->
+            
+            <DataTemplate DataType="{x:Type menu:FileItem}">
+                <Grid>
+                    <TextBlock Text="{Binding Path=Name}" >
+                        <TextBlock.ToolTip>
+                            <ToolTip>
+                                <TextBlock Text="{Binding Path}"/>
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                        
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding ElementName=This, Path=ViewModel.ClickCommand}" CommandParameter="{Binding Path=Path}" MouseAction="LeftDoubleClick"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+    <materialDesign:DialogHost Identifier="TreeMenu">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:ColorZone Grid.Column="0" Grid.ColumnSpan="2"
+                        Mode="PrimaryLight" Height="30"
+                        Effect="{DynamicResource MaterialDesignShadowDepth3}">
+                    </materialDesign:ColorZone>
+
+                    <TextBlock Grid.Column="0"
+                        Style="{StaticResource DialogCaptionTextBlock}"
+                        Text="Динамическое меню">
+                    </TextBlock>
+
+                    <Button
+                        Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Style="{DynamicResource DialogHeaderButtonStyle}"
+                        Margin="0"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+                        <materialDesign:PackIcon Kind="WindowClose" Width="25" Height="25"/>
+                    </Button>
+
+                </Grid>
+            </StackPanel>
+
+            <TreeView x:Name="TreeView" Grid.Row="1"
+                ItemsSource="{Binding Items}"
+                helpers:TreeViewHelper.SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
+            </TreeView>
+
+            <materialDesign:ColorZone Grid.Row="2"
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Mode="PrimaryLight"
+                Effect="{DynamicResource MaterialDesignShadowDepth3}">
+
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Width="40"
+                            Style="{DynamicResource DialogHeaderButtonStyle}"
+                            ToolTip="Добавить группу"
+                            Command="{Binding AddGroupCommand}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}">
+                            <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="DarkOliveGreen" />
+                        </Button>
+
+                        <Button Grid.Column="1" Width="40"
+                            Style="{DynamicResource DialogHeaderButtonStyle}"
+                            HorizontalAlignment="Left"
+                            ToolTip="Добавить проект"
+                            Command="{Binding AddItemCommand}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}">
+                            <materialDesign:PackIcon Kind="Add" Foreground="DarkGreen"/>
+                        </Button>
+
+                        <Button Grid.Column="2" Width="40"
+                            Style="{DynamicResource DialogHeaderButtonStyle}"
+                            ToolTip="Удалить объект"
+                            Command="{Binding RemoveElementCommand}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}">
+                            <materialDesign:PackIcon Kind="Close" Foreground="DarkRed" />
+                        </Button>
+
+                    </Grid>
+                </StackPanel>
+
+            </materialDesign:ColorZone>
+
+            <materialDesign:Snackbar Grid.Row="2"
+                ActionButtonStyle="{StaticResource MaterialDesignSnackbarActionLightButton}"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                MessageQueue="{Binding DialogsHelper.MessageQueue}">
+            </materialDesign:Snackbar>
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

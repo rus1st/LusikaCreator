@@ -1,0 +1,190 @@
+﻿<metro:MetroWindow x:Class="TestApp.Views.Windows.VariablesViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    mc:Ignorable="d"
+    Title="{Binding Title}"
+    TitleCharacterCasing="Normal"
+    x:Name="This"
+    ShowInTaskbar="False"
+    ShowMinButton="False"
+    ShowMaxRestoreButton="False"
+    Left="{Binding ElementName=This, Path=ViewModel.Settings.Left, Mode=TwoWay}"
+    Top="{Binding ElementName=This, Path=ViewModel.Settings.Top, Mode=TwoWay}"
+    DataContext="{Binding ElementName=This, Path=ViewModel}"
+    Height="500" Width="400">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Skins/MainSkin.xaml"/>
+                <!--<ResourceDictionary Source="pack://application:,,,/Dragablz;component/themes/mahapps.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <materialDesign:DialogHost Identifier="VariablesViewer">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <DataGrid Grid.Row="0"
+                AutoGenerateColumns="False"
+                CanUserSortColumns="True"
+                CanUserAddRows="False"
+                CanUserReorderColumns="True"
+                ItemsSource="{Binding FilteredVariables.View}"
+                SelectedItem="{Binding Selected}"
+                IsReadOnly="True"
+                EnableRowVirtualization="True"
+                GridLinesVisibility="All"
+                BorderThickness="0"
+                RowHeaderWidth="0"
+                Background="{StaticResource MaterialDesignBackground}">
+
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Копировать имя" Command="{Binding CopyCommand}" CommandParameter='name'/>
+                        <MenuItem Header="Копировать значение" Command="{Binding CopyCommand}" CommandParameter='value'/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Name}" IsReadOnly="True" Header="Имя">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="{Binding Name, Converter={StaticResource FontWeightConverter}}" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Тип" Width="Auto" Binding="{Binding Type, Converter={StaticResource EnumToStringConverter}, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Значение" Width="*" Binding="{Binding StringValue}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            
+            <materialDesign:DrawerHost Grid.Row="1"
+                BorderBrush="{DynamicResource MaterialDesignDivider}">
+
+                <materialDesign:DrawerHost.BottomDrawerContent>
+                    <StackPanel Grid.Row="1" Margin="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="100"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                Style="{StaticResource ObjectBrowserTextStyle}"
+                                Text="Фильтр по типу">
+                            </TextBlock>
+                            <ComboBox Grid.Row="1" Grid.Column="0"
+                                Margin="5 5 0 5"
+                                ItemsSource="{Binding VariableTypes, Converter={StaticResource EnumToStringConverter}}"
+                                SelectedItem="{Binding FilteredType, Converter={StaticResource EnumToStringConverter}, Mode=TwoWay}">
+                            </ComboBox>
+
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                Margin="10 5 0 5"
+                                Style="{StaticResource ObjectBrowserTextStyle}"
+                                Text="Фильтр по имени">
+                            </TextBlock>
+                            <TextBox Grid.Row="1" Grid.Column="1"
+                                Margin="10 5 0 5"
+                                Style="{StaticResource ObjectBrowserTextBoxStyle}"
+                                Text="{Binding FilteredName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            </TextBox>
+
+                            <Button
+                                Grid.Row="1" Grid.Column="2"
+                                Style="{DynamicResource DialogHeaderButtonStyle}"
+                                ToolTip="Сбросить все фильтры"
+                                Command="{Binding RemoveFilterCommand}"
+                                Margin="5 5 0 5">
+                                <materialDesign:PackIcon Kind="Trash" />
+                            </Button>
+
+                            <Button
+                                Grid.Row="1" Grid.Column="3"
+                                Style="{DynamicResource DialogHeaderButtonStyle}"
+                                ToolTip="Закрыть"
+                                Margin="5"
+                                Command="{x:Static materialDesign:DrawerHost.CloseDrawerCommand}"
+                                CommandParameter="{x:Static Dock.Bottom}">
+                                <materialDesign:PackIcon Kind="Close" />
+                            </Button>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
+                                Style="{StaticResource ObjectBrowserTextStyle}"
+                                Text="{Binding FilteredCount}">
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+
+                </materialDesign:DrawerHost.BottomDrawerContent>
+
+                <materialDesign:ColorZone
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Mode="PrimaryLight"
+                    Effect="{DynamicResource MaterialDesignShadowDepth3}">
+
+                    <StackPanel Margin="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0"
+                                Style="{DynamicResource DialogHeaderButtonStyle}"
+                                ToolTip="Фильтр"
+                                Margin="5"
+                                Command="{x:Static materialDesign:DrawerHost.OpenDrawerCommand}"
+                                CommandParameter="{x:Static Dock.Bottom}">
+                                <materialDesign:PackIcon Kind="MixerSettings" />
+                            </Button>
+
+                            <Button Grid.Column="1"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Visibility="{Binding IsInEditMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Width="110" HorizontalAlignment="Left" Margin="0 5 5 5"
+                                Content="Добавить"
+                                Command="{Binding ElementName=This, Path=ViewModel.AddCommand}">
+                            </Button>
+
+                            <Button Grid.Column="2"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Width="110" HorizontalAlignment="Left" Margin="0 5 5 5"
+                                Content="Изменить"
+                                Command="{Binding ElementName=This, Path=ViewModel.EditCommand}"
+                                Visibility="{Binding ElementName=This, Path=ViewModel.RemoveBtnIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            </Button>
+
+                            <Button Grid.Column="3"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Width="110" HorizontalAlignment="Left" Margin="0 5 0 5"
+                                Content="Удалить"
+                                Command="{Binding ElementName=This, Path=ViewModel.RemoveCommand}"
+                                Visibility="{Binding ElementName=This, Path=ViewModel.RemoveBtnIsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+
+                </materialDesign:ColorZone>
+            </materialDesign:DrawerHost>
+
+        </Grid>
+    </materialDesign:DialogHost>
+</metro:MetroWindow>

@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="TestApp.Views.Dialogs.VariableEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:controls="clr-namespace:TestApp.Views.Controls"
+             mc:Ignorable="d" 
+             x:Name="This"
+             DataContext="{Binding ElementName=This, Path=ViewModel}"
+             Width="270" Height="Auto" d:DesignHeight="300">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Skins/MainSkin.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <materialDesign:DialogHost Identifier="VariableEditor">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:ColorZone Grid.Column="0" Grid.ColumnSpan="2"
+                        Mode="PrimaryLight" Height="30"
+                        Effect="{DynamicResource MaterialDesignShadowDepth3}">
+                    </materialDesign:ColorZone>
+
+                    <TextBlock Grid.Column="0"
+                        Style="{StaticResource DialogCaptionTextBlock}"
+                        Text="{Binding Title, FallbackValue='Редактор переменной'}" />
+
+                    <Button
+                        Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Style="{DynamicResource DialogHeaderButtonStyle}"
+                        Margin="0"
+                        Command="{Binding DiscardChangesCommand}">
+                        <materialDesign:PackIcon Kind="WindowClose" Width="25" Height="25" />
+                    </Button>
+
+                </Grid>
+            </StackPanel>
+
+            <controls:ValuesSwitcher Grid.Row="1" Margin="5 10 5 10" DataContext="{Binding Switcher}"/>
+
+            <materialDesign:ColorZone Grid.Row="2"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Mode="PrimaryLight"
+                    Effect="{DynamicResource MaterialDesignShadowDepth3}">
+
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Width="110" HorizontalAlignment="Right" Margin="5"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Content="Сохранить"
+                            Command="{Binding ApplyChangesCommand}"/>
+
+                        <Button Grid.Column="1" Width="110" HorizontalAlignment="Right" Margin="5"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Content="Отмена"
+                            Command="{Binding DiscardChangesCommand}"/>
+
+                    </Grid>
+                </StackPanel>
+
+            </materialDesign:ColorZone>
+
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

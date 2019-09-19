@@ -1,0 +1,121 @@
+﻿<metro:MetroWindow x:Class="TestApp.Views.Windows.ToolsPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    mc:Ignorable="d"
+    x:Name="This"
+    TitleCharacterCasing="Normal"
+    ShowInTaskbar="False"
+    ShowMinButton="False"
+    ShowMaxRestoreButton="False"
+    ResizeMode="NoResize"
+    Left="{Binding ElementName=This, Path=ViewModel.Settings.Left, Mode=TwoWay}"
+    Top="{Binding ElementName=This, Path=ViewModel.Settings.Top, Mode=TwoWay}"
+    DataContext="{Binding ElementName=This, Path=ViewModel}"
+    Title="Панель инструментов" Height="80" Width="1000">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Skins/MetroSkin.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/themes/mahapps.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <ToolBarTray Grid.Row="0">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+                                
+                <Button
+                    ToolTip="Добавить текст"
+                    Command="{Binding AddLabelCommand}">
+                    <materialDesign:PackIcon Kind="FormatColourText" />
+                </Button>
+                <Button
+                    ToolTip="Добавить поле для ввода"
+                    Command="{Binding AddTextBoxCommand}">
+                    <materialDesign:PackIcon Kind="Textbox" />
+                </Button>
+                <Button
+                    ToolTip="Добавить флажок"
+                    Command="{Binding AddCheckBoxCommand}">
+                    <materialDesign:PackIcon Kind="CheckboxMarkedOutline" />
+                </Button>
+                <Button
+                    ToolTip="Добавить переключатель"
+                    Command="{Binding AddRadioButtonCommand}">
+                    <materialDesign:PackIcon Kind="RadioButtonChecked" />
+                </Button>
+                <Button
+                    ToolTip="Добавить дату"
+                    Command="{Binding AddDatePickerCommand}">
+                    <materialDesign:PackIcon Kind="Calendar" />
+                </Button>
+                <Button
+                    ToolTip="Добавить время"
+                    Command="{Binding AddTimePickerCommand}">
+                    <materialDesign:PackIcon Kind="Timer" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    ToolTip="Запуск в режиме отладки"
+                    Command="{Binding ChangeModeCommand}">
+                    <materialDesign:PackIcon
+                        Kind="{Binding DebugBtnKind, FallbackValue='Play'}"
+                        Foreground="{Binding DebugBtnColor, FallbackValue='Green'}">
+                    </materialDesign:PackIcon>
+                </Button>
+
+                <Separator />
+
+                <ListBox SelectionMode="Extended">
+                    <!--<ListBox.ToolTip>
+                        <StackPanel>
+                            <TextBlock Text="MaterialDesignToolToggleListBox" />
+                            <TextBlock Text="Multiple selection" />
+                            <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
+                        </StackPanel>
+                    </ListBox.ToolTip>-->
+                    <ListBoxItem
+                        IsSelected="{Binding IsBoldBtnEnabled}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                        <materialDesign:PackIcon Kind="FormatBold" />
+                    </ListBoxItem>
+                    <ListBoxItem
+                        IsSelected="{Binding IsItalicBtnEnabled}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                        <materialDesign:PackIcon Kind="FormatItalic" />
+                    </ListBoxItem>
+                    <ListBoxItem
+                        IsSelected="{Binding IsUnderlinedBtnEnabled}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                        <materialDesign:PackIcon Kind="FormatUnderline" />
+                    </ListBoxItem>
+                </ListBox>
+                
+                <StackPanel VerticalAlignment="Center" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                            Content="Размер шрифта:" VerticalAlignment="Center">
+                        </Label>
+                        <ComboBox Grid.Column="1" 
+                            ItemsSource="{Binding FontSizes}"
+                            SelectedItem="{Binding SelectedFontSize, Mode=TwoWay}">
+                        </ComboBox>
+                    </Grid>
+                </StackPanel>
+            </ToolBar>
+        </ToolBarTray>
+    </Grid>
+</metro:MetroWindow>

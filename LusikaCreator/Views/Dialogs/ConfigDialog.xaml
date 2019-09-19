@@ -1,0 +1,265 @@
+﻿<UserControl x:Class="TestApp.Views.Dialogs.ConfigDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        x:Name="This"
+        DataContext="{Binding ElementName=This, Path=ViewModel}"     
+        Height="Auto" Width="400">
+
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Skins/MainSkin.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/themes/mahapps.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MahAppsTabablzControlStyle}" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <materialDesign:DialogHost Identifier="ConfigDialog">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <dragablz:TabablzControl Grid.Row="0" ShowDefaultAddButton="False"
+                SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
+
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="Общие настройки" FontSize="14" VerticalAlignment="Center" Margin="5,5,5,5"/>
+                    </TabItem.Header>
+
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                            Style="{StaticResource ObjectBrowserValueStyle}" FontSize="14">
+                            Рабочая папка
+                        </TextBlock>
+
+                        <TextBox Grid.Row="1" Grid.Column="0" Margin="5 0 5 0"
+                            Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Left" 
+                            Text="{Binding WorkingPath}" IsReadOnly="True">
+                        </TextBox>
+
+                        <Button Grid.Row="1" Grid.Column="1"
+                            Style="{DynamicResource DialogHeaderButtonStyle}"
+                            ToolTip="Выбрать папку"
+                            Command="{Binding SelectWorkingPathCommand}">
+                            <materialDesign:PackIcon Kind="FolderOpen" />
+                        </Button>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                           Style="{StaticResource ObjectBrowserTextStyle}">
+                            Содержит путь к корневой папке, содержащей файлы проектов.
+                            Структура вложенных папок учитывается при формировании динамического меню.
+                        </TextBlock>
+
+                    </Grid>
+
+                </TabItem>
+
+                <TabItem>
+                    <TabItem.Header>
+                        <Grid>
+                            <TextBlock Text="Настройки проекта" FontSize="14" VerticalAlignment="Center" Margin="5,5,5,5"/>
+                        </Grid>
+                    </TabItem.Header>
+
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Margin="5"
+                                    Style="{StaticResource ObjectBrowserValueStyle}" FontSize="14">
+                                    Название заголовка окна
+                                </TextBlock>
+
+                                <TextBox Grid.Row="1" Margin="5 0 5 0"
+                                    Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Left" 
+                                    Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}">
+                                </TextBox>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                                    Style="{StaticResource ObjectBrowserValueStyle}" FontSize="14">
+                                    Файл шаблона
+                                </TextBlock>
+
+                                <TextBox Grid.Row="1" Grid.Column="0" Margin="5 0 5 0"
+                                    Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Left" 
+                                    Text="{Binding TemplateFileName}" IsReadOnly="True">
+                                </TextBox>
+
+                                <Button Grid.Row="1" Grid.Column="1"
+                                    Style="{DynamicResource DialogHeaderButtonStyle}"
+                                    ToolTip="Выбрать файл"
+                                    Command="{Binding SelectTemplateCommand}">
+                                    <materialDesign:PackIcon Kind="FileWord" />
+                                </Button>
+
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"
+                                    Style="{StaticResource ObjectBrowserValueStyle}" FontSize="14">
+                                    Путь к папке для сохранения файлов
+                                </TextBlock>
+
+                                <TextBox Grid.Row="1" Grid.Column="0" Margin="5 0 5 0"
+                                    Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Left" 
+                                    Text="{Binding OutPath, UpdateSourceTrigger=PropertyChanged}">
+                                </TextBox>
+
+                                <Button Grid.Row="1" Grid.Column="1"
+                                    Style="{DynamicResource DialogHeaderButtonStyle}"
+                                    ToolTip="Выбрать папку"
+                                    Command="{Binding SelectOutPathCommand}">
+                                    <materialDesign:PackIcon Kind="FolderOpen" />
+                                </Button>
+
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Margin="5"
+                                    Style="{StaticResource ObjectBrowserValueStyle}" FontSize="14">
+                                    Название имени файла
+                                </TextBlock>
+
+                                <TextBox Grid.Row="1" Margin="5 0 5 0"
+                                    Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Left" 
+                                    Text="{Binding ResultFileName, UpdateSourceTrigger=PropertyChanged}">
+                                </TextBox>
+
+                                <TextBlock Grid.Row="2" Margin="5"
+                                    Style="{StaticResource ObjectBrowserTextStyle}">
+                                    Расширение файла не указывается.
+                                </TextBlock>
+                                
+                                <StackPanel Grid.Row="3">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <CheckBox Grid.Row="0" Grid.Column="0"
+                                            Margin="5 0 0 0"
+                                            Content="Открыть файл" IsChecked="{Binding ExecuteFile}">
+                                        </CheckBox>
+                                        
+                                        <CheckBox Grid.Row="0" Grid.Column="1"
+                                            Margin="10 0 0 0"
+                                            Content="Открыть папку с файлом" IsChecked="{Binding OpenFolder}">
+                                        </CheckBox>
+
+                                        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                            Margin="5 5 0 0"
+                                            Content="Перезаписать файл, если он уже существует" IsChecked="{Binding IsOverwrite}">
+                                        </CheckBox>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                    </Grid>
+                </TabItem>
+
+            </dragablz:TabablzControl>
+
+            <materialDesign:ColorZone Grid.Row="1"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Mode="PrimaryLight"
+                    Effect="{DynamicResource MaterialDesignShadowDepth3}">
+
+                <StackPanel Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Width="110" HorizontalAlignment="Right" Margin="5"
+                            Content="Сохранить"
+                            Command="{Binding SaveCommand}"
+                            Visibility="{Binding HasChanges, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                        <Button Grid.Column="1" 
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Width="110" HorizontalAlignment="Right" Margin="5"
+                            Content="Отмена"
+                            Command="{Binding CloseCommand}"/>
+
+                    </Grid>
+                </StackPanel>
+
+            </materialDesign:ColorZone>
+
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

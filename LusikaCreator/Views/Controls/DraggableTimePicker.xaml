@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="TestApp.Views.Controls.DraggableTimePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:validation="clr-namespace:TestApp.Views.Validation"
+             mc:Ignorable="d"
+             x:Name="This"
+             d:DataContext="{Binding ElementName=This, Path=ViewModel}"
+             Width="Auto" MinWidth="30" Height="Auto"
+             MouseDown="OnMouseDown" MouseUp="OnMouseUp">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Views/Skins/MainSkin.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Rectangle
+            Margin="0 0 0 0"
+            Fill="{Binding Properties.BackgroundColor, FallbackValue=White}">
+        </Rectangle>
+
+        <materialDesign:TimePicker
+            Style="{StaticResource DraggableTimeStyle}"
+            FontSize="{Binding Properties.FontSettings.Size}"
+            Foreground="{Binding Properties.FontSettings.Color}"
+            FontWeight="{Binding Properties.FontSettings.FontWeight}"
+            FontStyle="{Binding Properties.FontSettings.FontStyle}"
+            IsManipulationEnabled="{Binding Properties.IsEnabled}"
+            IsEnabled="{Binding Properties.IsEnabled}"
+            SelectedTimeFormat="{Binding TimeFormat}"
+            WithSeconds="{Binding UseSeconds}"
+            Visibility="{Binding Properties.IsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <materialDesign:TimePicker.Resources>
+                <validation:BindingProxy IsRequired="{Binding IsRequired}" Properties="{Binding Properties}" x:Key="Proxy"/>
+            </materialDesign:TimePicker.Resources>
+
+            <materialDesign:TimePicker.SelectedTime>
+                <Binding
+                    Path="TimeForBinding"
+                    Mode="TwoWay"
+                    NotifyOnValidationError="True"
+                    UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <validation:NotEmptyValidationRule ValidatesOnTargetUpdated="True">
+                            <validation:NotEmptyValidationRule.Wrapper>
+                                <validation:ValidationWrapper IsRequired="{Binding IsRequired, Source={StaticResource Proxy}}" Properties="{Binding Properties, Source={StaticResource Proxy}}"/>
+                            </validation:NotEmptyValidationRule.Wrapper>
+                        </validation:NotEmptyValidationRule>
+                    </Binding.ValidationRules>
+                </Binding>
+            </materialDesign:TimePicker.SelectedTime>
+            
+        </materialDesign:TimePicker>
+
+        <Rectangle
+            Style="{StaticResource DraggableObjectRectangleStyle}"
+            Stroke="{Binding Properties.BorderColor, FallbackValue=Red}"
+            StrokeThickness="{Binding Properties.BorderDepth, FallbackValue=1}"
+            Visibility="{Binding Properties.IsInEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+        </Rectangle>
+    </Grid>
+</UserControl>
