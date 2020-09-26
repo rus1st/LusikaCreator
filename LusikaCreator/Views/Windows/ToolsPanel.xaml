@@ -5,15 +5,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    mc:Ignorable="d"
+                   xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                   mc:Ignorable="d"
     x:Name="This"
     TitleCharacterCasing="Normal"
     ShowInTaskbar="False"
     ShowMinButton="False"
     ShowMaxRestoreButton="False"
-    ResizeMode="NoResize"
-    Left="{Binding ElementName=This, Path=ViewModel.Settings.Left, Mode=TwoWay}"
-    Top="{Binding ElementName=This, Path=ViewModel.Settings.Top, Mode=TwoWay}"
+    ResizeMode="CanResize"
+    Left="{Binding ElementName=This, Path=ViewModel.WindowSettings.Left, Mode=TwoWay}"
+    Top="{Binding ElementName=This, Path=ViewModel.WindowSettings.Top, Mode=TwoWay}"
     DataContext="{Binding ElementName=This, Path=ViewModel}"
     Title="Панель инструментов" Height="80" Width="1000">
 
@@ -77,7 +78,7 @@
 
                 <Separator />
 
-                <ListBox SelectionMode="Extended">
+                <ListBox SelectionMode="Extended" IsEnabled="{Binding Path=FontIsSet}">
                     <!--<ListBox.ToolTip>
                         <StackPanel>
                             <TextBlock Text="MaterialDesignToolToggleListBox" />
@@ -86,33 +87,38 @@
                         </StackPanel>
                     </ListBox.ToolTip>-->
                     <ListBoxItem
-                        IsSelected="{Binding IsBoldBtnEnabled}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                        IsSelected="{Binding Path=FontSettings.Bold}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
                         <materialDesign:PackIcon Kind="FormatBold" />
                     </ListBoxItem>
                     <ListBoxItem
-                        IsSelected="{Binding IsItalicBtnEnabled}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                        IsSelected="{Binding Path=FontSettings.Italic}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
                         <materialDesign:PackIcon Kind="FormatItalic" />
                     </ListBoxItem>
                     <ListBoxItem
-                        IsSelected="{Binding IsUnderlinedBtnEnabled}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                        IsSelected="{Binding Path=FontSettings.Underline}" IsEnabled="{Binding FontSettingsIsNotEmpty}">
                         <materialDesign:PackIcon Kind="FormatUnderline" />
                     </ListBoxItem>
                 </ListBox>
                 
-                <StackPanel VerticalAlignment="Center" IsEnabled="{Binding FontSettingsIsNotEmpty}">
+                <StackPanel VerticalAlignment="Center" IsEnabled="{Binding Path=FontIsSet}">
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                            Content="Размер шрифта:" VerticalAlignment="Center">
+                            Content="Шрифт" VerticalAlignment="Center">
                         </Label>
-                        <ComboBox Grid.Column="1" 
+                        <ComboBox Grid.Column="1" Margin="10 0 0 0" MinWidth="30"
                             ItemsSource="{Binding FontSizes}"
-                            SelectedItem="{Binding SelectedFontSize, Mode=TwoWay}">
+                            SelectedItem="{Binding Path=FontSettings.Size, Mode=TwoWay}">
                         </ComboBox>
+
+                        <xctk:ColorPicker  Grid.Column="2" Width="50" Margin="10 0 0 0"
+                                           SelectedColor="{Binding Path=SelectedColor, Mode=TwoWay}"/>
+                        
                     </Grid>
                 </StackPanel>
             </ToolBar>

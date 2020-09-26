@@ -22,7 +22,6 @@ namespace TestApp.ViewModels.Dialogs
         private readonly Repository.ObjectsRepository _objectsRepository;
         private readonly Repository.VariablesRepository _variablesRepository;
         private readonly DialogsManager _dialogsHelper;
-        private readonly ScriptRunner _scriptRunner;
 
         public RelayCommand AddConditionCommand => new RelayCommand(AddCondition);
         public RelayCommand RemoveConditionCommand => new RelayCommand(RemoveCondition);
@@ -105,15 +104,7 @@ namespace TestApp.ViewModels.Dialogs
         #endregion
 
         public List<ActionOperation> OperationNames
-            => Enum.GetValues(typeof (ActionOperation)).Cast<ActionOperation>()
-            
-            
-            .Where(t=>t!= ActionOperation.CallFunction)
-            
-            
-            
-            
-            .ToList();
+            => Enum.GetValues(typeof (ActionOperation)).Cast<ActionOperation>().ToList();
 
         private void UpdateTargetNames()
         {
@@ -130,13 +121,6 @@ namespace TestApp.ViewModels.Dialogs
 
                 case ActionOperation.SetObjectText:
                     _objectsRepository.GetNamesOfObjectsWithText().ForEach(t => TargetNames.Add(t));
-                    break;
-
-                case ActionOperation.CallFunction:
-                    //Enum.GetValues(typeof (InternalFunctionType))
-                    //    .Cast<InternalFunctionType>()
-                    //    .ToList()
-                    //    .ForEach(t => TargetNames.Add(t.ToString()));
                     break;
             }
             TargetIsEmpty = TargetNames.Count == 0;
@@ -182,7 +166,7 @@ namespace TestApp.ViewModels.Dialogs
                             .ToList()
                             .ForEach(t => SelectableValues.Add(t));
 
-                        RaisePropertyChanged("SelectableValues");
+                        RaisePropertyChanged(nameof(SelectableValues));
                         break;
 
                     case ActionOperation.SetObjectText:
@@ -190,22 +174,6 @@ namespace TestApp.ViewModels.Dialogs
                         _objectsRepository.GetNamesOfObjectsWithText().ForEach(t => TargetNames.Add(t));
 
                         ValueIsString = true;
-                        break;
-
-                    case ActionOperation.CallFunction:
-                        TargetLabelText = "Записать значение в переменную:";
-                        ResultLabelText = "Метод:";
-
-                        var funcNames = _scriptRunner.FuncNames;
-                        if (funcNames != null)
-                        {
-                            funcNames.ForEach(t => SelectableValues.Add(t));
-                            ValueIsList = true;
-                        }
-
-                        _variablesRepository.GetNames(Action.Variable.Name).ForEach(t => TargetNames.Add(t));
-                        IsVariableBtnEnabled = true;
-                        RaisePropertyChanged("SelectableValues");
                         break;
                 }
 
@@ -304,7 +272,7 @@ namespace TestApp.ViewModels.Dialogs
                             ResultValue = _isInEditMode
                                 ? (ActionSelectorOperand) Action.Result.Value
                                 : ((BoolVariableWrapper) targetVariable).Value;
-                            RaisePropertyChanged("SelectableValues");
+                            RaisePropertyChanged(nameof(SelectableValues));
                         }
                         else if (targetVariable is DateVariableWrapper)
                         {
@@ -343,13 +311,6 @@ namespace TestApp.ViewModels.Dialogs
                         ResultValue = _isInEditMode
                             ? Action.Result.Value
                             : _objectsRepository.GetObjectText(TargetName);
-                        break;
-
-                    case ActionOperation.CallFunction:
-                        ValueIsList = true;
-                        if (SelectableValues != null && SelectableValues.Count > 0)
-                            SelectableValue = SelectableValues[0];
-                        else SelectableValue = null;
                         break;
                 }
                 if (!HasChanges) HasChanges = true;
@@ -445,7 +406,6 @@ namespace TestApp.ViewModels.Dialogs
             _objectsRepository = dataProvider.ObjectsRepository;
             _variablesRepository = dataProvider.VariablesRepository;
             _dialogsHelper = dataProvider.DialogsManager;
-            _scriptRunner = new ScriptRunner(dataProvider.CommonSettings.RootPath);
 
             Action = new ObjectAction(variable);
             Title = "Создание действия";
@@ -528,6 +488,7 @@ namespace TestApp.ViewModels.Dialogs
 
         private void OnObjectSelected(IObjectViewModel selectedObject)
         {
+            if (selectedObject == null) return;
             if (Operation != ActionOperation.SetObjectText && Operation != ActionOperation.SetVisibility) return;
             var selector = TargetNames.FirstOrDefault(t => t == selectedObject.Properties.Name);
             if (selector != null) TargetName = selector;
@@ -542,14 +503,14 @@ namespace TestApp.ViewModels.Dialogs
         private void AddCondition()
         {
             if (Action.Condition == null) Action.Condition = new ActionCondition();
-            RaisePropertyChanged("HasCondition");
+            RaisePropertyChanged(nameof(HasCondition));
             if (!HasChanges) HasChanges = true;
         }
 
         private void RemoveCondition()
         {
             Action.Condition = null;
-            RaisePropertyChanged("HasCondition");
+            RaisePropertyChanged(nameof(HasCondition));
             if (!HasChanges) HasChanges = true;
         }
 

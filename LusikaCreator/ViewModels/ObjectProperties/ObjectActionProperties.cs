@@ -36,42 +36,12 @@ namespace TestApp.ViewModels.ObjectProperties
             Actions = new List<ObjectAction>();
         }
 
-        //public void AddAction(ObjectAction action)
-        //{
-        //    if (action.Result == null) return;
-
-        //    if (action.TargetType == ActionTargetType.Variable)
-        //    {
-        //        var variableName = action.Result.TargetName;
-        //        var targetVariable = _variablesRepository.Find(variableName);
-        //        if (variableName == null) return;
-
-        //        //Variable.DependedVariables.Add(targetVariable);
-        //        //targetVariable.RelatedVariables.Add(Variable);
-        //    }
-        //    else if (action.TargetType == ActionTargetType.Object)
-        //    {
-        //        var objectName = action.Result.TargetName;
-        //        var targetObject = _objectsRepository.Find(objectName);
-        //        if (targetObject == null) return;
-
-        //        //Variable.DependedObjects.Add(targetObject);
-        //        //targetObject.RelatedVariables.Add(Variable);
-        //    }
-        //}
-
         public void RemoveAction(ObjectAction action)
         {
-            
         }
 
         public void UpdateActions(List<ObjectAction> actions)
         {
-            //Variable.DependedVariables.Clear();
-            //Variable.DependedObjects.Clear();
-            //actions.ForEach(AddAction);
-            //Actions = actions;
-
             Actions.Clear();
             foreach (var action in actions)
             {

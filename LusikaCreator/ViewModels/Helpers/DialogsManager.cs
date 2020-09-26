@@ -105,18 +105,6 @@ namespace TestApp.ViewModels.Helpers
             await DialogHost.Show(view, Common.GetEnumDescription(hostIdentifier));
         }
 
-        public async Task OpenScriptEditor(
-            ScriptsRepository repository,
-            UserScript script = null,
-            WindowType hostIdentifier = WindowType.Root)
-        {
-            var viewModel = new ScriptsViewerViewModel(_dataProvider, script);
-            var view = new ScriptsViewer(viewModel);
-
-            await DialogHost.Show(view, Common.GetEnumDescription(hostIdentifier));
-        }
-
-
         /// <summary>
         /// Открывает Редактор действий для редактирования действия
         /// </summary>

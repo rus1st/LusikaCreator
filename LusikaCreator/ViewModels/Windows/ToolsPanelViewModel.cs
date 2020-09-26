@@ -25,7 +25,7 @@ namespace TestApp.ViewModels.Windows
         public RelayCommand AddDatePickerCommand => new RelayCommand(AddDatePicker);
         public RelayCommand AddTimePickerCommand => new RelayCommand(AddTimePicker);
 
-        public WindowSettings Settings { get; set; }
+        public WindowSettings WindowSettings { get; set; }
 
         public string DebugBtnKind
         {
@@ -61,141 +61,82 @@ namespace TestApp.ViewModels.Windows
         }
         private bool _isDebugMode;
 
-        public FontSettings FontSettings
+        public FontSettings FontSettings { get; set; }
+
+        public bool FontIsSet
         {
-            get { return _fontSettings; }
-            set
-            {
-                Set(ref _fontSettings, value);
-                if (value == null)
-                {
-                    FontSettingsIsNotEmpty = false;
-                    IsBoldBtnEnabled = false;
-                    IsItalicBtnEnabled = false;
-                    IsUnderlinedBtnEnabled = false;
-                    SelectedFontSize = 12;
-                    return;
-                }
-
-                FontSettingsIsNotEmpty = true;
-                IsBoldBtnEnabled = FontSettings.IsBold;
-                IsItalicBtnEnabled = FontSettings.IsItalic;
-                IsUnderlinedBtnEnabled = FontSettings.IsUnderlined;
-                SelectedFontSize = FontSettings.Size;
-            }
+            get { return _fontIsSet; }
+            set { Set(ref _fontIsSet, value); }
         }
-        private FontSettings _fontSettings;
-
-        public bool FontSettingsIsNotEmpty
-        {
-            get { return _fontSettingsIsNotEmpty; }
-            set { Set(ref _fontSettingsIsNotEmpty, value); }
-        }
-        private bool _fontSettingsIsNotEmpty;
-
-        public bool IsBoldBtnEnabled
-        {
-            get { return _isBoldBtnEnabled; }
-            set
-            {
-                Set(ref _isBoldBtnEnabled, value);
-                if (FontSettings == null) return;
-
-                FontSettings.IsBold = value;
-                if (_selected != null) _selected.Properties.FontSettings.IsBold = value;
-            }
-        }
-        private bool _isBoldBtnEnabled;
-
-        public bool IsItalicBtnEnabled
-        {
-            get { return _isItalicBtnEnabled; }
-            set
-            {
-                Set(ref _isItalicBtnEnabled, value);
-                if (FontSettings == null) return;
-
-                FontSettings.IsItalic = value;
-                if (_selected != null) _selected.Properties.FontSettings.IsItalic = value;
-            }
-        }
-        private bool _isItalicBtnEnabled;
-
-        public bool IsUnderlinedBtnEnabled
-        {
-            get { return _isUnderlinedBtnEnabled; }
-            set
-            {
-                Set(ref _isUnderlinedBtnEnabled, value);
-                if (FontSettings == null) return;
-
-                FontSettings.IsUnderlined = value;
-                if (_selected != null) _selected.Properties.FontSettings.IsUnderlined = value;
-            }
-        }
-        private bool _isUnderlinedBtnEnabled;
+        private bool _fontIsSet;
 
         public List<byte> FontSizes { get; set; }
-
-        public byte SelectedFontSize
-        {
-            get { return _selectedFontSize; }
-            set
-            {
-                Set(ref _selectedFontSize, value);
-                if (FontSettings == null) return;
-
-                FontSettings.Size = value;
-                if (_selected != null) _selected.Properties.FontSettings.Size = value;
-            }
-        }
-        private byte _selectedFontSize;
-
 
         public ToolsPanelViewModel(DataProvider dataProvider)
         {
             _dataProvider = dataProvider;
-            Settings = dataProvider.CommonSettings.ToolsPanelSettings;
+            WindowSettings = dataProvider.CommonSettings.ToolsPanelSettings;
             _objectsRepository = dataProvider.ObjectsRepository;
             _objectsRepository.SelectionChanged += OnObjectSelected;
+            _objectsRepository.Unselected += OnUnselected;
+
             _commonSettings = dataProvider.CommonSettings;
             _commonSettings.AppModeChanged += delegate { IsDebugMode = _commonSettings.AppMode == AppMode.Debug; };
             IsDebugMode = false;
-            FontSettings = new FontSettings();
 
             FontSizes = new List<byte>();
             for (byte i = 8; i < 26; i++) FontSizes.Add(i);
-            SelectedFontSize = 12;
+            FontSettings = new FontSettings();
         }
 
-        private void OnObjectSelected(IObjectViewModel viewModel)
+        private void OnUnselected()
         {
-            if (viewModel?.Properties?.FontSettings == null)
-            {
-                var defaultSettings = new FontSettings();
-                defaultSettings.SetDefault();
+            FontSettings = new FontSettings();
+            FontIsSet = false;
+            UpdateView();
+        }
 
-                IsBoldBtnEnabled = defaultSettings.IsBold;
-                IsItalicBtnEnabled = defaultSettings.IsItalic;
-                IsUnderlinedBtnEnabled = defaultSettings.IsUnderlined;
-                SelectedFontSize = defaultSettings.Size;
+        public Color SelectedColor
+        {
+            get
+            {
+                if (FontSettings == null) return Constants.DefaultColor.Color;
+                return FontSettings.Color.Color;
+            }
+            set
+            {
+                if (FontSettings == null) return;
+                FontSettings.Color = new SolidColorBrush(value);
+            }
+        }
+
+        private void OnObjectSelected(IObjectViewModel formObject)
+        {
+            if (formObject?.Properties == null)
+            {
+                OnUnselected();
                 return;
             }
-            _selected = viewModel;
-            if (_selected?.Properties?.FontSettings == null) return;
 
-            IsBoldBtnEnabled = _selected.Properties.FontSettings.IsBold;
-            IsItalicBtnEnabled = _selected.Properties.FontSettings.IsItalic;
-            IsUnderlinedBtnEnabled = _selected.Properties.FontSettings.IsUnderlined;
-            SelectedFontSize = _selected.Properties.FontSettings.Size;
+            if (formObject.Properties.FontSettings == null)
+            {
+                formObject.Properties.FontSettings = new FontSettings();
+            }
+
+            FontIsSet = true;
+            FontSettings = formObject.Properties.FontSettings;
+            UpdateView();
         }
 
-        private IObjectViewModel _selected;
+        private void UpdateView()
+        {
+            RaisePropertyChanged(nameof(FontSettings));
+            RaisePropertyChanged(nameof(SelectedColor));
+        }
 
         private void AddLabel()
         {
             _dataProvider.ObjectsRepository.Add(ObjectType.Label);
-            //Messenger.Default.Send(new NotificationMessage(Messages.AddLabel));
         }
 
         private void AddTextBox()

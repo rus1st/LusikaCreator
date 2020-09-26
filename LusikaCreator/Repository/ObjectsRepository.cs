@@ -22,8 +22,25 @@ namespace TestApp.Repository
     {
         private readonly DataProvider _dataProvider;
         private readonly VariablesRepository _variablesRepository;
+
+        #region События
+
+        /// <summary>
+        /// Объект был выделен
+        /// </summary>
         public event Handlers.ObjectChangedHandler SelectionChanged;
-        public event Handlers.EmptyHandler ObjectChanged;
+
+        /// <summary>
+        /// Объект был изменен
+        /// </summary>
+        public event Handlers.ObjectModifiedHandler ObjectModified;
+
+        /// <summary>
+        /// Сняли выделение всех объектов
+        /// </summary>
+        public event Handlers.EmptyHandler Unselected;
+
+        #endregion
 
         public string ErrorMessage { get; set; }
 
@@ -48,17 +65,14 @@ namespace TestApp.Repository
             ViewModels.CollectionChanged += OnViewModelsChanged;
 
             DispatcherHelper.Initialize();
+            Messenger.Default.Register<NotificationMessage>(this, ProcessMessage);
             Messenger.Default.Register<NotificationMessage<uint>>(this, ProcessId);
             Messenger.Default.Register<NotificationMessage<bool>>(this, ProcessBool);
-            //Messenger.Default.Register<NotificationMessage>(this, ProcessMessage);
         }
-
-        //public bool IsCompleted =>
-        //    ViewModels.Where(t => t is IRequired).Cast<IRequired>().All(viewModel => viewModel.IsComplete);
 
         public bool IsCompleted()
         {
-            foreach (var vm in ViewModels.Where(t=>t is IRequired))
+            foreach (var vm in ViewModels.Where(t => t is IRequired))
             {
                 if (!((IRequired)vm).IsComplete)
                 {
@@ -76,7 +90,6 @@ namespace TestApp.Repository
                 var removedObject = (IObjectViewModel) e.OldItems[0];
                 RemoveFromAssignedObjects(ActionTargetType.Object, removedObject.Properties.Name);
             }
-            ObjectChanged?.Invoke();
         }
 
         /// <summary>
@@ -159,33 +172,15 @@ namespace TestApp.Repository
             if (selected != null) SelectionChanged?.Invoke(selected);
         }
 
-        //private void ProcessMessage(NotificationMessage message)
-        //{
-        //    switch (message.Notification)
-        //    {
-        //        case Messages.AddLabel:
-        //            Add(ObjectType.Label);
-        //            break;
-        //        case Messages.AddTextBox:
-        //            Add(ObjectType.TextBox);
-        //            break;
-        //        case Messages.AddCheckBox:
-        //            Add(ObjectType.CheckBox);
-        //            break;
-        //        case Messages.AddComboBox:
-        //            Add(ObjectType.ComboBox);
-        //            break;
-        //        case Messages.AddRadioButton:
-        //            Add(ObjectType.RadioButton);
-        //            break;
-        //        case Messages.AddDatePicker:
-        //            Add(ObjectType.DatePicker);
-        //            break;
-        //        case Messages.AddTimePicker:
-        //            Add(ObjectType.TimePicker);
-        //            break;
-        //    }
-        //}
+        private void ProcessMessage(NotificationMessage message)
+        {
+            switch (message.Notification)
+            {
+                case Messages.DoUnselectAll:
+                    Unselected?.Invoke();
+                    break;
+            }
+        }
 
         private void ProcessId(NotificationMessage<uint> message)
         {
@@ -267,6 +262,7 @@ namespace TestApp.Repository
             viewModel.Properties.FontSettings = new FontSettings();
             ViewModels.Add(viewModel);
             Select(viewModel);
+            ObjectModified?.Invoke(viewModel.Properties.Id);
 
             return viewModel;
         }
@@ -279,75 +275,27 @@ namespace TestApp.Repository
             IObjectViewModel viewModel = null;
             if (formObject is CheckBoxObject)
             {
-                var storedObject = (CheckBoxObject) formObject;
-                var variable = _variablesRepository.Find(storedObject.VariableName);
-                variable.IsAssigned = true;
-                var vm = new CheckBoxViewModel(storedObject.Id, storedObject.Name, variable, _dataProvider)
-                {
-                    TextProperties = {Text = storedObject.Text},
-                };
-                //vm.ActionProperties.Variable = variable;
-                vm.ActionProperties.UpdateActions(storedObject.Actions);
-                viewModel = vm;
+                viewModel = new CheckBoxViewModel((CheckBoxObject)formObject, _dataProvider);
             }
             else if (formObject is LabelObject)
             {
-                var storedObject = (LabelObject) formObject;
-                viewModel = new LabelViewModel(storedObject.Id, storedObject.Name, _dataProvider)
-                {
-                    TextProperties = {Text = storedObject.Text}
-                };
+                viewModel = new LabelViewModel((LabelObject)formObject, _dataProvider);
             }
             else if (formObject is TextBoxObject)
             {
-                var storedObject = (TextBoxObject) formObject;
-                var variable = _variablesRepository.Find(storedObject.VariableName);
-                variable.IsAssigned = true;
-                var vm = new TextBoxViewModel(storedObject.Id, storedObject.Name, variable, _dataProvider)
-                {
-                    IsRequired = storedObject.IsRequired
-                };
-                vm.ActionProperties.UpdateActions(storedObject.Actions);
-                viewModel = vm;
+                viewModel = new TextBoxViewModel((TextBoxObject)formObject, _dataProvider);
             }
             else if (formObject is RadioButtonObject)
             {
-                var storedObject = (RadioButtonObject) formObject;
-                var variable = _variablesRepository.Find(storedObject.VariableName);
-                variable.IsAssigned = true;
-                var vm = new RadioViewModel(storedObject.Id, storedObject.Name, variable, _dataProvider)
-                {
-                    GroupName = storedObject.GroupName,
-                    TextProperties = {Text = storedObject.Text},
-                };
-                vm.ActionProperties.UpdateActions(storedObject.Actions);
-                viewModel = vm;
+                viewModel = new RadioViewModel((RadioButtonObject)formObject, _dataProvider);
             }
             else if (formObject is DateBoxObject)
             {
-                var storedObject = (DateBoxObject) formObject;
-                var variable = _variablesRepository.Find(storedObject.VariableName);
-                variable.IsAssigned = true;
-                var vm = new DatePickerViewModel(storedObject.Id, storedObject.Name, variable, _dataProvider)
-                {
-                    IsRequired = storedObject.IsRequired
-                };
-                vm.ActionProperties.UpdateActions(storedObject.Actions);
-                viewModel = vm;
-
+                viewModel = new DatePickerViewModel((DateBoxObject)formObject, _dataProvider);
             }
             else if (formObject is TimePickerObject)
             {
-                var storedObject = (TimePickerObject) formObject;
-                var variable = _variablesRepository.Find(storedObject.VariableName);
-                variable.IsAssigned = true;
-                var vm = new TimePickerViewModel(storedObject.Id, storedObject.Name, variable, _dataProvider)
-                {
-                    IsRequired = storedObject.IsRequired
-                };
-                vm.ActionProperties.UpdateActions(storedObject.Actions);
-                vm.UpdateBindingTime();
-                viewModel = vm;
+                viewModel = new TimePickerViewModel((TimePickerObject)formObject, _dataProvider);
             }
 
             if (viewModel == null) return;
@@ -358,6 +306,7 @@ namespace TestApp.Repository
             viewModel.Properties.SetVisibility(formObject.IsVisible);
             viewModel.Properties.TabId = formObject.TabId;
             ViewModels.Add(viewModel);
+            ObjectModified?.Invoke(viewModel.Properties.Id);
         }
 
         private void SelectRadioGroup(string groupName)
@@ -426,8 +375,7 @@ namespace TestApp.Repository
         /// </summary>
         public List<string> GetNamesOfObjectsWithText()
         {
-            return (from viewModel in ViewModels.Where(t => t is IActionProperties)
-                where !string.IsNullOrEmpty(viewModel.Properties.Name)
+            return (from viewModel in ViewModels where !string.IsNullOrEmpty(viewModel.Properties.Name)
                 select viewModel.Properties.Name).ToList();
         }
 
@@ -816,8 +764,6 @@ namespace TestApp.Repository
 
             #endregion
 
-            // todo call function
-
             return true;
         }
 
@@ -831,13 +777,8 @@ namespace TestApp.Repository
 
         public void Select(IObjectViewModel viewModel)
         {
-            if (viewModel == null)
-            {
-                SelectionChanged?.Invoke(null);
-                return;
-            }
-
-            if (_dataProvider.CommonSettings.AppMode != AppMode.Editor) return;
+            if (viewModel?.Properties == null ||
+                _dataProvider.CommonSettings.AppMode != AppMode.Editor) return;
 
             var type = viewModel.GetType();
             UnselectAll();
@@ -850,7 +791,6 @@ namespace TestApp.Repository
             viewModel.Properties.IsSelected = true;
             SelectionChanged?.Invoke(viewModel);
         }
-
 
         public void SwitchAppMode()
         {
@@ -929,7 +869,7 @@ namespace TestApp.Repository
 
             viewModel.Update(buffer);
             Select(viewModel);
-
+            ObjectModified?.Invoke(viewModel.Properties.Id);
             return true;
         }
 

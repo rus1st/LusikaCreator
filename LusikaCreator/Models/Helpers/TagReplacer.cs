@@ -1,15 +1,10 @@
 ﻿using System.Linq;
+using TestApp.Models.Enums;
 using TestApp.Repository;
 using TestApp.ViewModels.Variables;
 
 namespace TestApp.Models.Helpers
 {
-    public enum TagType
-    {
-        Single,
-        Paragraph
-    }
-
     public class TagStruct
     {
         private readonly string _tagName;

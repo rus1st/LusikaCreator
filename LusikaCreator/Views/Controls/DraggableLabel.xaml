@@ -19,23 +19,10 @@
     </UserControl.Resources>
 
     <Grid>
-        
-        <!--<TextBox
-            Style="{StaticResource DraggableEditStyle}" Margin="0"
-            FontSize="{Binding Properties.FontSettings.Size}"
-            Foreground="{Binding Properties.FontSettings.Color}"
-            FontWeight="{Binding Properties.FontSettings.FontWeight}"
-            FontStyle="{Binding Properties.FontSettings.FontStyle}"
-            TextDecorations="{Binding Properties.FontSettings.TextDecoration}"
-            Text="{Binding TextProperties.FormattedText, FallbackValue='Текст'}"
-            Visibility="{Binding Properties.IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
-            IsEnabled="False">
-
-        </TextBox>-->
         <TextBlock
             Style="{StaticResource DraggableLabelStyle}"
             FontSize="{Binding Properties.FontSettings.Size}"
-            Foreground="{Binding Color}"
+            Foreground="{Binding Properties.FontSettings.Color}"
             FontWeight="{Binding Properties.FontSettings.FontWeight}"
             FontStyle="{Binding Properties.FontSettings.FontStyle}"
             TextDecorations="{Binding Properties.FontSettings.TextDecoration}"

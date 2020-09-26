@@ -115,7 +115,14 @@ namespace TestApp.ViewModels.Windows
             }
         }
 
-        public bool CanBeRequired => _selected is IRequired;
+        public bool CanBeRequired
+        {
+            get
+            {
+                var ret = _selected is IRequired;
+                return ret;
+            }
+        }
 
         public bool IsRequired
         {
@@ -323,17 +330,19 @@ namespace TestApp.ViewModels.Windows
             _dialogsHelper = dataProvider.DialogsManager;
             _rootPath = dataProvider.CommonSettings.RootPath;
             Settings = dataProvider.CommonSettings.ObjectBrowserSettings;
-
-            Messenger.Default.Register<NotificationMessage>(this, ProcessMessage);
             InvariantVariable = new ValuesSwitcherViewModel(dataProvider, isCreateMode: false);
             HasVariable = false;
 
             _unsavedChanges = new List<IObjectViewModel>();
             _objectsRepository.SelectionChanged += SetSelected;
+            _objectsRepository.Unselected += OnUnselected;
+
             InvariantVariable.VariableChanged += delegate { VariableIsChanged = true; };
             Actions.CollectionChanged += ActionsChanged;
             Actions.Clear();
         }
+
+
 
         private void SetSelected(IObjectViewModel viewModel)
         {
@@ -353,14 +362,15 @@ namespace TestApp.ViewModels.Windows
             var saved = _unsavedChanges.FirstOrDefault(t => t.Properties.Id == viewModel.Properties.Id);
             _selected = saved ?? viewModel.Clone();
 
-            RaisePropertyChanged("Id");
-            RaisePropertyChanged("Name");
-            RaisePropertyChanged("Type");
-            RaisePropertyChanged("Text");
-            RaisePropertyChanged("IsVisible");
-            RaisePropertyChanged("IsRequired");
-            RaisePropertyChanged("IsTextBox");
-            RaisePropertyChanged("IsRadioButton");
+            RaisePropertyChanged(nameof(Id));
+            RaisePropertyChanged(nameof(Name));
+            RaisePropertyChanged(nameof(Type));
+            RaisePropertyChanged(nameof(Text));
+            RaisePropertyChanged(nameof(IsVisible));
+            RaisePropertyChanged(nameof(IsRequired));
+            RaisePropertyChanged(nameof(CanBeRequired));
+            RaisePropertyChanged(nameof(IsTextBox));
+            RaisePropertyChanged(nameof(IsRadioButton));
 
             if (_selected is IActionProperties)
             {
@@ -399,10 +409,11 @@ namespace TestApp.ViewModels.Windows
             _unsavedChanges.Add(selected);
         }
 
-        private void ProcessMessage(NotificationMessage message)
+        /// <summary>
+        /// Сняли выделение
+        /// </summary>
+        private void OnUnselected()
         {
-            if (message.Notification != Messages.DoUnselectAll) return;
-
             _objectsRepository.UnselectAll();
             SetSelected(null);
         }

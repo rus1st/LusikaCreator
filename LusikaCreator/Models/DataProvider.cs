@@ -17,8 +17,6 @@ namespace TestApp.Models
 
         public ProjectRepository ProjectRepository { get; }
 
-        public ScriptsRepository ScriptsRepository { get; }
-
         public TabsRepository TabsRepository { get; }
 
         public XmlRepository XmlRepository { get; }
@@ -41,12 +39,9 @@ namespace TestApp.Models
             CommonSettings.AppModeChanged += delegate { ObjectsRepository.SwitchAppMode(); };
             
             ProjectRepository = new ProjectRepository(this);
-            ScriptsRepository = new ScriptsRepository();
             DialogsManager = new DialogsManager(this);
             TabsRepository = new TabsRepository(this);
             WindowsManager = new WindowsManager(this);
-
-            XmlRepository.LoadScripts();
         }
 
         public bool SaveCommonSettings()

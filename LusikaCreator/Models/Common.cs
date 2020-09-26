@@ -86,34 +86,6 @@ namespace TestApp.Models
             return tags.Count == 0 ? new List<string>() : tags;
         }
 
-
-        //public static List<string> GetTextTags(string text)
-        //{
-        //    var ret = new List<string>();
-        //    if (string.IsNullOrEmpty(text)) return ret;
-        //    var from = 0;
-
-        //    int startIndex;
-        //    do
-        //    {
-        //        startIndex = text.IndexOf("{#", from, StringComparison.Ordinal);
-        //        if (startIndex != -1)
-        //        {
-        //            from = startIndex + 2;
-        //            var endIndex = text.IndexOf("}", @from, StringComparison.Ordinal);
-
-        //            if (endIndex != -1)
-        //            {
-        //                ret.Add("{#" + text.Substring(from, endIndex - from) + "}");
-        //                from = endIndex + 1;
-        //            }
-        //        }
-        //    } while (startIndex != -1);
-
-        //    return ret;
-        //}
-
-
         public static bool IsTextHasTags(string text)
             => !string.IsNullOrEmpty(text) && GetTextTags(text).Count > 0;
 

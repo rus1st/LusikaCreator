@@ -1,8 +1,8 @@
-﻿using System.Activities.Statements;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using TestApp.Models;
+using TestApp.Models.Config;
 using TestApp.Models.FormObjects;
 using TestApp.Models.Interfaces;
 using TestApp.ViewModels.Interfaces;
@@ -23,15 +23,34 @@ namespace TestApp.ViewModels.Controls
         {
         }
 
-        public LabelViewModel(uint id, string name,
-            DataProvider dataProvider)
+        /// <summary>
+        /// Создание нового объекта
+        /// </summary>
+        public LabelViewModel(uint id, string name, DataProvider dataProvider)
         {
+            if (string.IsNullOrEmpty(name)) return;
+
             Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
             TextProperties = new ObjectTextProperties(dataProvider.VariablesRepository);
         }
 
-        public Brush Color
-            => Properties.GetVisibility() ? Properties.FontSettings?.Color ?? Brushes.Black : Brushes.LightGray;
+        /// <summary>
+        /// Восстановление объекта из xml
+        /// </summary>
+        public LabelViewModel(LabelObject storedObj, DataProvider dataProvider)
+        {
+            if (storedObj == null || dataProvider?.CommonSettings == null) return;
+
+            Properties = new ObjectBaseProperties(storedObj.Id, storedObj.Name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
+            Properties.FontSettings.Update(storedObj.FontSettings);
+            TextProperties = new ObjectTextProperties(dataProvider.VariablesRepository)
+            {
+                Text = storedObj.Text
+            };
+        }
+
+        public Brush Color => Properties.GetVisibility() ? Properties.FontSettings?.Color
+            ?? Brushes.Black : Brushes.LightGray;
 
         public void Update(IObjectViewModel buffer)
         {
@@ -40,7 +59,7 @@ namespace TestApp.ViewModels.Controls
 
             Properties.Update(viewModel.Properties);
             TextProperties.Update(viewModel.TextProperties);
-            RaisePropertyChanged("Color");
+            RaisePropertyChanged(nameof(Color));
         }
 
         public IObjectViewModel Clone()

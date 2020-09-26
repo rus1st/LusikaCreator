@@ -5,6 +5,7 @@ using System.Threading;
 using Microsoft.Office.Interop.Word;
 using TestApp.Models;
 using TestApp.Models.Config;
+using TestApp.Models.Enums;
 using TestApp.Models.Helpers;
 using TestApp.Models.Interfaces;
 using TestApp.ViewModels.Helpers;

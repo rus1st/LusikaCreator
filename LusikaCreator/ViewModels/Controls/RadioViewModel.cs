@@ -2,6 +2,7 @@
 using System.Linq;
 using GalaSoft.MvvmLight;
 using TestApp.Models;
+using TestApp.Models.Config;
 using TestApp.Models.FormObjects;
 using TestApp.Models.Interfaces;
 using TestApp.Repository;
@@ -50,18 +51,46 @@ namespace TestApp.ViewModels.Controls
         {
         }
 
+        /// <summary>
+        /// Создание нового объекта
+        /// </summary>
         public RadioViewModel(uint id, string name,
             IVariableWrapper variable,
             DataProvider dataProvider)
         {
             _objectsRepository = dataProvider.ObjectsRepository;
-            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode,
-                dataProvider.ObjectsRepository);
+            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
             TextProperties = new ObjectTextProperties(dataProvider.VariablesRepository);
-            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository,
-                dataProvider.ObjectsRepository);
+            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository, dataProvider.ObjectsRepository);
             ActionProperties.Variable.ValueChanged += OnValueChanged;
             IsChecked = ((BoolVariableWrapper) ActionProperties.Variable).IsSet;
+        }
+
+        /// <summary>
+        /// Восстановление объекта из xml
+        /// </summary>
+        public RadioViewModel(RadioButtonObject storedObj, DataProvider dataProvider)
+        {
+            _objectsRepository = dataProvider.ObjectsRepository;
+            var variablesRepository = dataProvider.VariablesRepository;
+
+            Properties = new ObjectBaseProperties(storedObj.Id, storedObj.Name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
+            Properties.FontSettings.Update(storedObj.FontSettings);
+            GroupName = storedObj.GroupName;
+            TextProperties = new ObjectTextProperties(variablesRepository)
+            {
+                Text = storedObj.Text
+            };
+
+            var variable = variablesRepository.Find(storedObj.VariableName);
+            if (variable != null)
+            {
+                variable.IsAssigned = true;
+                ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository, dataProvider.ObjectsRepository);
+                ActionProperties.Variable.ValueChanged += OnValueChanged;
+                IsChecked = ((BoolVariableWrapper)ActionProperties.Variable).IsSet;
+                ActionProperties.UpdateActions(storedObj.Actions);
+            }
         }
 
         private void OnValueChanged()
@@ -72,7 +101,7 @@ namespace TestApp.ViewModels.Controls
             if (Equals(_isChecked, value)) return;
 
             _isChecked = value;
-            RaisePropertyChanged("IsChecked");
+            RaisePropertyChanged(nameof(IsChecked));
         }
 
         public void Update(IObjectViewModel buffer)

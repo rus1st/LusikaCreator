@@ -4,14 +4,17 @@ using GalaSoft.MvvmLight;
 using TestApp.Models;
 using TestApp.Models.FormObjects;
 using TestApp.Models.Interfaces;
+using TestApp.Repository;
 using TestApp.ViewModels.Interfaces;
 using TestApp.ViewModels.ObjectProperties;
 using TestApp.ViewModels.Variables;
 
 namespace TestApp.ViewModels.Controls
 {
-    public class DatePickerViewModel : ViewModelBase, IObjectViewModel, IActionProperties, IRequired
+    public class DatePickerViewModel : ViewModelBase, IObjectViewModel, ITextProperties, IActionProperties, IRequired
     {
+        private readonly ObjectsRepository _objectsRepository;
+
         public ObjectBaseProperties Properties { get; set; }
 
         public ObjectTextProperties TextProperties { get; set; }
@@ -36,7 +39,7 @@ namespace TestApp.ViewModels.Controls
 
         public void Refresh()
         {
-            RaisePropertyChanged("Date");
+            RaisePropertyChanged(nameof(Date));
         }
 
         public DateTime? Date
@@ -54,18 +57,43 @@ namespace TestApp.ViewModels.Controls
         {
         }
 
+        /// <summary>
+        /// Создание нового объекта
+        /// </summary>
         public DatePickerViewModel(uint id, string name,
             IVariableWrapper variable,
             DataProvider dataProvider)
         {
-            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode,
-                dataProvider.ObjectsRepository);
+            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
             TextProperties = new ObjectTextProperties(dataProvider.VariablesRepository);
-            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository,
-                dataProvider.ObjectsRepository);
+            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository, dataProvider.ObjectsRepository);
             ActionProperties.Variable.ValueChanged += OnValueChanged;
             Date = ((DateVariableWrapper) ActionProperties.Variable).Value;
             IsRequired = false;
+        }
+
+        /// <summary>
+        /// Восстановление объекта из xml
+        /// </summary>
+        public DatePickerViewModel(DateBoxObject storedObj, DataProvider dataProvider)
+        {
+            _objectsRepository = dataProvider.ObjectsRepository;
+            var variablesRepository = dataProvider.VariablesRepository;
+
+            Properties = new ObjectBaseProperties(storedObj.Id, storedObj.Name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
+            Properties.FontSettings.Update(storedObj.FontSettings);
+            TextProperties = new ObjectTextProperties(variablesRepository);
+            IsRequired = storedObj.IsRequired;
+
+            var variable = variablesRepository.Find(storedObj.VariableName);
+            if (variable != null)
+            {
+                variable.IsAssigned = true;
+                ActionProperties = new ObjectActionProperties(variable, variablesRepository, dataProvider.ObjectsRepository);
+                ActionProperties.Variable.ValueChanged += OnValueChanged;
+                Date = ((DateVariableWrapper)ActionProperties.Variable).Value;
+                ActionProperties.UpdateActions(storedObj.Actions);
+            }
         }
 
         private void OnValueChanged()
@@ -74,7 +102,7 @@ namespace TestApp.ViewModels.Controls
             if (_date == value) return;
 
             _date = value;
-            RaisePropertyChanged("Date");
+            RaisePropertyChanged(nameof(Date));
         }
 
         public void Update(IObjectViewModel buffer)

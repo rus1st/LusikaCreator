@@ -17,7 +17,6 @@ namespace TestApp.ViewModels.Helpers
         private ToolsPanel _toolsPanel;
         private ObjectBrowser _objectBrowser;
         private VariablesViewer _variablesViewer;
-        private ScriptsViewer _scriptsViewer;
 
         public WindowsManager(DataProvider dataProvider)
         {
@@ -43,10 +42,6 @@ namespace TestApp.ViewModels.Helpers
 
             var variablesViewerViewModel = new VariablesViewerViewModel(_dataProvider);
             _variablesViewer = new VariablesViewer(variablesViewerViewModel);
-
-            var scriptsViewerViewModel = new ScriptsViewerViewModel(_dataProvider);
-            _scriptsViewer = new ScriptsViewer(scriptsViewerViewModel);
-
 
             if (_dataProvider.CommonSettings.ObjectBrowserSettings.IsSet)
             {
@@ -115,15 +110,9 @@ namespace TestApp.ViewModels.Helpers
                 e.Cancel = true;
                 HideVariablesViewer();
             };
-            _scriptsViewer.Closing += (sender, e) =>
-            {
-                e.Cancel = true;
-                HideScriptsViewer();
-            };
 
             _toolsPanel.Hide();
             _variablesViewer.Hide();
-            _scriptsViewer.Hide();
             _objectBrowser.Hide();
             CenterMainWindow();
 
@@ -253,17 +242,6 @@ namespace TestApp.ViewModels.Helpers
         {
             _variablesViewer.Show();
             _dataProvider.CommonSettings.VariablesViewerSettings.IsVisible = true;
-        }
-
-        public void HideScriptsViewer()
-        {
-            _scriptsViewer.Hide();
-            _dataProvider.CommonSettings.ScriptsViewerSettings.IsVisible = false;
-        }
-        public void ShowScriptsViewer()
-        {
-            _scriptsViewer.Show();
-            _dataProvider.CommonSettings.ScriptsViewerSettings.IsVisible = true;
         }
     }
 }

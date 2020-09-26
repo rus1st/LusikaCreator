@@ -223,14 +223,14 @@ namespace TestApp.ViewModels.ObjectProperties
         }
         private FontSettings _fontSettings;
 
-        public ObjectBaseProperties(uint id, string name, AppMode appMode,
-            ObjectsRepository objectsRepository)
+        public ObjectBaseProperties(uint id, string name, AppMode appMode, ObjectsRepository objectsRepository)
         {
             _objectsRepository = objectsRepository;
             AppMode = appMode;
             Id = id;
             Name = name;
             SetVisibility(true);
+            FontSettings = new FontSettings();
             RequestMove = new SimpleCommand<Point>(MoveTo);
         }
 

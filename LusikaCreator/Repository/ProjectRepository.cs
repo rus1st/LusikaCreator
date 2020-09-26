@@ -26,8 +26,8 @@ namespace TestApp.Repository
             ProjectSettings = new ProjectSettings(_dataProvider.VariablesRepository);
             SelectedFileName = null;
             HasChanges = false;
-            _dataProvider.ObjectsRepository.ObjectChanged += delegate { HasChanges = true; };
-            _dataProvider.VariablesRepository.VariableChanged += delegate { HasChanges = true; };
+            _dataProvider.ObjectsRepository.SelectionChanged += (viewModel) => { if (viewModel != null && !HasChanges) HasChanges = true; };
+            _dataProvider.VariablesRepository.VariableChanged += (variable, oldName) => { if (!HasChanges) HasChanges = true; };
         }
 
         private async Task DoBeforeCloseProject()

@@ -6,8 +6,6 @@ namespace TestApp.Models.Config
 {   
     public class FontSettings : ViewModelBase
     {
-        private readonly SolidColorBrush _defaultColor = Brushes.Navy;
-
         public byte Size
         {
             get { return _size; }
@@ -15,38 +13,38 @@ namespace TestApp.Models.Config
         }
         private byte _size;
 
-        public bool IsBold
+        public bool Bold
         {
-            get { return _isBold; }
+            get { return _bold; }
             set
             {
-                Set(ref _isBold, value);
+                Set(ref _bold, value);
                 FontWeight = value ? FontWeights.Bold : FontWeights.Regular;
             }
         }
-        private bool _isBold;
+        private bool _bold;
 
-        public bool IsItalic
+        public bool Italic
         {
-            get { return _isItalic; }
+            get { return _italic; }
             set
             {
-                Set(ref _isItalic, value);
+                Set(ref _italic, value);
                 FontStyle = value ? FontStyles.Italic : FontStyles.Normal;
             }
         }
-        private bool _isItalic;
+        private bool _italic;
 
-        public bool IsUnderlined
+        public bool Underline
         {
-            get { return _isUnderlined; }
+            get { return _underline; }
             set
             {
-                Set(ref _isUnderlined, value);
+                Set(ref _underline, value);
                 TextDecoration = value ? TextDecorations.Underline : null;
             }
         }
-        private bool _isUnderlined;
+        private bool _underline;
 
         public string HexColor
         {
@@ -54,7 +52,6 @@ namespace TestApp.Models.Config
             set
             {
                 _hexColor = value;
-                if (Color != null) return;
 
                 try
                 {
@@ -62,7 +59,7 @@ namespace TestApp.Models.Config
                 }
                 catch
                 {
-                    Color = _defaultColor;
+                    Color = Constants.DefaultColor;
                 }
             }
         }
@@ -74,7 +71,7 @@ namespace TestApp.Models.Config
             set
             {
                 Set(ref _color, value);
-                HexColor = value.Color.ToString();
+                _hexColor = value.Color.ToString();
             }
         }
         private SolidColorBrush _color;
@@ -105,21 +102,50 @@ namespace TestApp.Models.Config
             SetDefault();
         }
 
+        public FontSettings(StoredFontSettings settings)
+        {
+            if (settings == null)
+            {
+                SetDefault();
+                return;
+            }
+            Size = settings.Size;
+            Bold = settings.Bold;
+            Italic = settings.Italic;
+            Underline = settings.Underline;
+            HexColor = settings.HexColor;
+        }
+
         public void SetDefault()
         {
             Size = 12;
-            IsBold = false;
-            IsItalic = false;
-            IsUnderlined = false;
-            Color = _defaultColor;
+            Bold = false;
+            Italic = false;
+            Underline = false;
+            Color = Constants.DefaultColor;
+        }
+
+        public void Update(StoredFontSettings fontSettings)
+        {
+            if (fontSettings == null)
+            {
+                SetDefault();
+                return;
+            }
+
+            Size = fontSettings.Size;
+            Bold = fontSettings.Bold;
+            Italic = fontSettings.Italic;
+            Underline = fontSettings.Underline;
+            HexColor = fontSettings.HexColor;
         }
 
         public void Update(FontSettings fontSettings)
         {
             Size = fontSettings.Size;
-            IsBold = fontSettings.IsBold;
-            IsItalic = fontSettings.IsItalic;
-            IsUnderlined = fontSettings.IsUnderlined;
+            Bold = fontSettings.Bold;
+            Italic = fontSettings.Italic;
+            Underline = fontSettings.Underline;
             Color = fontSettings.Color;
         }
 
@@ -128,9 +154,9 @@ namespace TestApp.Models.Config
             return new FontSettings
             {
                 Size = Size,
-                IsBold = IsBold,
-                IsItalic = IsItalic,
-                IsUnderlined = IsUnderlined,
+                Bold = Bold,
+                Italic = Italic,
+                Underline = Underline,
                 Color = Color
             };
         }
@@ -140,9 +166,9 @@ namespace TestApp.Models.Config
             return new StoredFontSettings
             {
                 Size = Size,
-                IsBold = IsBold,
-                IsItalic = IsItalic,
-                IsUnderlined = IsUnderlined,
+                Bold = Bold,
+                Italic = Italic,
+                Underline = Underline,
                 HexColor = HexColor
             };
         }
