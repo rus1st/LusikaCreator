@@ -9,13 +9,13 @@ namespace TestApp.Models.Config
         public byte Size { get; set; }
 
         [DataMember(Name = "bold", Order = 1)]
-        public bool IsBold { get; set; }
+        public bool Bold { get; set; }
 
         [DataMember(Name = "italic", Order = 2)]
-        public bool IsItalic { get; set; }
+        public bool Italic { get; set; }
 
         [DataMember(Name = "underlined", Order = 3)]
-        public bool IsUnderlined { get; set; }
+        public bool Underline { get; set; }
 
         [DataMember(Name = "color", Order = 4)]
         public string HexColor { get; set; }

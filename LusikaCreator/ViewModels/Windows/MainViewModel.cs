@@ -79,14 +79,6 @@ namespace TestApp.ViewModels.Windows
                 if (isVisible) helper.ShowVariablesViewer();
                 else helper.HideVariablesViewer();
             }
-            else if (type == typeof(ScriptsViewerViewModel))
-            {
-                DialogsHelper.ShowNotification("В разработке");
-                return;
-                var isVisible = _dataProvider.CommonSettings.ScriptsViewerSettings.IsVisible;
-                if (isVisible) helper.ShowScriptsViewer();
-                else helper.HideScriptsViewer();
-            }
         }
 
         public DialogsManager DialogsHelper { get; set; }
@@ -175,7 +167,7 @@ namespace TestApp.ViewModels.Windows
         private void New()
         {
             _projectRepository.NewProject();
-            RaisePropertyChanged("SelectedTabIndex");
+            RaisePropertyChanged(nameof(SelectedTabIndex));
         }
 
         private async void FillTemplate()
@@ -213,7 +205,7 @@ namespace TestApp.ViewModels.Windows
             if (string.IsNullOrEmpty(fileName)) return;
 
             await _projectRepository.OpenProject(fileName);
-            RaisePropertyChanged("SelectedTabIndex");
+            RaisePropertyChanged(nameof(SelectedTabIndex));
         }
 
         private async void Save()

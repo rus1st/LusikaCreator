@@ -62,10 +62,6 @@
       <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -85,10 +81,6 @@
     <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ookii.Dialogs.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0c15020868fd6249, processorArchitecture=MSIL">
@@ -119,6 +111,21 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -140,6 +147,7 @@
     <Compile Include="Models\Enums\ActionOperation.cs" />
     <Compile Include="Models\DataProvider.cs" />
     <Compile Include="Models\Enums\AppMode.cs" />
+    <Compile Include="Models\Enums\TagType.cs" />
     <Compile Include="Models\Enums\VariableType.cs" />
     <Compile Include="Models\Extentions\EnumExtensions.cs" />
     <Compile Include="Models\FormObjects\ComboBoxItem.cs" />
@@ -153,11 +161,10 @@
     <Compile Include="Models\FormObjects\TextBoxObject.cs" />
     <Compile Include="Models\FormObjects\ComboBoxObject.cs" />
     <Compile Include="Models\Enums\ObjectType.cs" />
-    <Compile Include="Models\Interfaces\IGrouped.cs" />
+    <Compile Include="ViewModels\Interfaces\IGrouped.cs" />
     <Compile Include="Models\FormObjects\LabelObject.cs" />
     <Compile Include="Models\Interfaces\ITextual.cs" />
     <Compile Include="Models\ObjectAction.cs" />
-    <Compile Include="Models\Helpers\ScriptRunner.cs" />
     <Compile Include="Models\UserScript.cs" />
     <Compile Include="Models\Variables\BoolVariable.cs" />
     <Compile Include="Models\Variables\DateVariable.cs" />
@@ -165,13 +172,11 @@
     <Compile Include="Models\Variables\StringVariable.cs" />
     <Compile Include="Models\Variables\TimeVariable.cs" />
     <Compile Include="Repository\ProjectRepository.cs" />
-    <Compile Include="Repository\ScriptsRepository.cs" />
     <Compile Include="Repository\TabsRepository.cs" />
     <Compile Include="ViewModels\Dialogs\InputDialogViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\Menu\MenuItem.cs" />
     <Compile Include="ViewModels\Dialogs\Menu\MenuItemProvider.cs" />
     <Compile Include="ViewModels\Dialogs\ProgressDialogViewModel.cs" />
-    <Compile Include="ViewModels\Dialogs\ScriptEditorViewModel.cs" />
     <Compile Include="ViewModels\Helpers\TreeViewHelper.cs" />
     <Compile Include="ViewModels\Helpers\WindowsManager.cs" />
     <Compile Include="ViewModels\Interfaces\IRequired.cs" />
@@ -203,7 +208,6 @@
     <Compile Include="ViewModels\Helpers\ConverterBindableParameter.cs" />
     <Compile Include="ViewModels\Helpers\DialogsManager.cs" />
     <Compile Include="ViewModels\Helpers\EnumBindingSourceExtension.cs" />
-    <Compile Include="ViewModels\Helpers\Locator.cs" />
     <Compile Include="ViewModels\Helpers\MultiValueConverterAdapter.cs" />
     <Compile Include="ViewModels\Helpers\SimpleCommand.cs" />
     <Compile Include="ViewModels\Helpers\ValuesSwitcherViewModel.cs" />
@@ -214,8 +218,6 @@
     <Compile Include="ViewModels\Windows\ObjectBrowserViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IObjectViewModel.cs" />
     <Compile Include="ViewModels\Dialogs\VariableEditorViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="ViewModels\Windows\ScriptsViewerViewModel.cs" />
     <Compile Include="ViewModels\Windows\ToolsPanelViewModel.cs" />
     <Compile Include="ViewModels\Windows\VariablesViewerViewModel.cs" />
     <Compile Include="Views\Controls\DraggableCheckBox.xaml.cs">
@@ -261,9 +263,6 @@
     <Compile Include="Views\Dialogs\ProgressDialog.xaml.cs">
       <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Dialogs\ScriptEditor.xaml.cs">
-      <DependentUpon>ScriptEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Dialogs\TreeMenu.xaml.cs">
       <DependentUpon>TreeMenu.xaml</DependentUpon>
     </Compile>
@@ -275,9 +274,6 @@
     <Compile Include="Views\Validation\ValidationWrapper.cs" />
     <Compile Include="Views\Windows\ObjectBrowser.xaml.cs">
       <DependentUpon>ObjectBrowser.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Windows\ScriptsViewer.xaml.cs">
-      <DependentUpon>ScriptsViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\ToolsPanel.xaml.cs">
       <DependentUpon>ToolsPanel.xaml</DependentUpon>
@@ -333,10 +329,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Dialogs\ScriptEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Dialogs\TreeMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -366,10 +358,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Windows\ObjectBrowser.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Windows\ScriptsViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -420,7 +408,9 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\StoredObjects\" />
+    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.4.1.js" />
+    <Content Include="Scripts\jquery-1.4.1.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

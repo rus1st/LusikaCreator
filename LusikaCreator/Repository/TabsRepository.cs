@@ -61,9 +61,6 @@ namespace TestApp.Repository
 
         public CollectionViewSource FilteredObjects { get; set; } = new CollectionViewSource();
 
-        //public ObservableCollection<IObjectViewModel> Source { get; set; } =
-        //    new ObservableCollection<IObjectViewModel>();
-
         public MyTabItem(byte id, string text, DataProvider dataProvider)
         {
             _dataProvider = dataProvider;

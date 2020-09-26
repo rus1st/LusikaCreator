@@ -1,4 +1,4 @@
-﻿namespace TestApp.Models.Interfaces
+﻿namespace TestApp.ViewModels.Interfaces
 {
     public interface IGrouped
     {

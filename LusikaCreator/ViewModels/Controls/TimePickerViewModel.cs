@@ -4,14 +4,17 @@ using GalaSoft.MvvmLight;
 using TestApp.Models;
 using TestApp.Models.FormObjects;
 using TestApp.Models.Interfaces;
+using TestApp.Repository;
 using TestApp.ViewModels.Interfaces;
 using TestApp.ViewModels.ObjectProperties;
 using TestApp.ViewModels.Variables;
 
 namespace TestApp.ViewModels.Controls
 {
-    public class TimePickerViewModel : ViewModelBase, IObjectViewModel, IActionProperties, IRequired
+    public class TimePickerViewModel : ViewModelBase, IObjectViewModel, ITextProperties, IActionProperties, IRequired
     {
+        private readonly ObjectsRepository _objectsRepository;
+
         public ObjectBaseProperties Properties { get; set; }
 
         public ObjectTextProperties TextProperties { get; set; }
@@ -29,7 +32,7 @@ namespace TestApp.ViewModels.Controls
 
         public void Refresh()
         {
-            RaisePropertyChanged("TimeForBinding");
+            RaisePropertyChanged(nameof(TimeForBinding));
         }
 
         public object TimeForBinding
@@ -84,15 +87,16 @@ namespace TestApp.ViewModels.Controls
         {
         }
 
+        /// <summary>
+        /// Создание нового объекта
+        /// </summary>
         public TimePickerViewModel(uint id, string name,
             IVariableWrapper variable,
             DataProvider dataProvider)
         {
-            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode,
-                dataProvider.ObjectsRepository);
+            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
             TextProperties = new ObjectTextProperties(dataProvider.VariablesRepository);
-            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository,
-                dataProvider.ObjectsRepository);
+            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository, dataProvider.ObjectsRepository);
             ActionProperties.Variable.ValueChanged += OnValueChanged;
 
             var timeWrapper = (TimeVariableWrapper) ActionProperties.Variable;
@@ -100,6 +104,33 @@ namespace TestApp.ViewModels.Controls
             UpdateBindingTime();
             UseSeconds = timeWrapper.UseSeconds;
             IsRequired = false;
+        }
+
+        /// <summary>
+        /// Восстановление объекта из xml
+        /// </summary>
+        public TimePickerViewModel(TimePickerObject storedObj, DataProvider dataProvider)
+        {
+            _objectsRepository = dataProvider.ObjectsRepository;
+            var variablesRepository = dataProvider.VariablesRepository;
+
+            Properties = new ObjectBaseProperties(storedObj.Id, storedObj.Name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
+            Properties.FontSettings.Update(storedObj.FontSettings);
+            TextProperties = new ObjectTextProperties(variablesRepository);
+            IsRequired = storedObj.IsRequired;
+
+            var variable = variablesRepository.Find(storedObj.VariableName);
+            if (variable != null)
+            {
+                var timeWrapper = (TimeVariableWrapper)ActionProperties.Variable;
+                timeWrapper.IsAssigned = true;
+                ActionProperties = new ObjectActionProperties(timeWrapper, variablesRepository, dataProvider.ObjectsRepository);
+                ActionProperties.Variable.ValueChanged += OnValueChanged;
+                Time = timeWrapper.Value;
+                UpdateBindingTime();
+                UseSeconds = timeWrapper.UseSeconds;
+                ActionProperties.UpdateActions(storedObj.Actions);
+            }
         }
 
         public void UpdateBindingTime()
@@ -118,7 +149,6 @@ namespace TestApp.ViewModels.Controls
 
             _time = variable.Value;
             UpdateBindingTime();
-            //RaisePropertyChanged("TimeForBinding");
             UseSeconds = variable.UseSeconds;
         }
 

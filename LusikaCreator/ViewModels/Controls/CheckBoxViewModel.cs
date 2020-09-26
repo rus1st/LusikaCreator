@@ -40,6 +40,9 @@ namespace TestApp.ViewModels.Controls
         {
         }
 
+        /// <summary>
+        /// Создание нового объекта
+        /// </summary>
         public CheckBoxViewModel(uint id, string name,
             IVariableWrapper variable,
             DataProvider dataProvider)
@@ -52,6 +55,32 @@ namespace TestApp.ViewModels.Controls
             IsChecked = ((BoolVariableWrapper) ActionProperties.Variable).IsSet;
         }
 
+        /// <summary>
+        /// Восстановление объекта из xml
+        /// </summary>
+        public CheckBoxViewModel(CheckBoxObject storedObj, DataProvider dataProvider)
+        {
+            _objectsRepository = dataProvider.ObjectsRepository;
+            var variablesRepository = dataProvider.VariablesRepository;
+
+            Properties = new ObjectBaseProperties(storedObj.Id, storedObj.Name, dataProvider.CommonSettings.AppMode, _objectsRepository);
+            Properties.FontSettings.Update(storedObj.FontSettings);
+            TextProperties = new ObjectTextProperties(variablesRepository)
+            {
+                Text = storedObj.Text
+            };
+
+            var variable = variablesRepository.Find(storedObj.VariableName);
+            if (variable != null)
+            {
+                variable.IsAssigned = true;
+                ActionProperties = new ObjectActionProperties(variable, variablesRepository, _objectsRepository);
+                ActionProperties.Variable.ValueChanged += OnValueChanged;
+                IsChecked = ((BoolVariableWrapper)ActionProperties.Variable).IsSet;
+                ActionProperties.UpdateActions(storedObj.Actions);
+            }
+        }
+
         private void OnValueChanged()
         {
             var value = ((BoolVariableWrapper) ActionProperties.Variable).IsSet;
@@ -60,7 +89,7 @@ namespace TestApp.ViewModels.Controls
             if (Equals(_isChecked, value)) return;
 
             _isChecked = value;
-            RaisePropertyChanged("IsChecked");
+            RaisePropertyChanged(nameof(IsChecked));
         }
 
         public void Update(IObjectViewModel buffer)

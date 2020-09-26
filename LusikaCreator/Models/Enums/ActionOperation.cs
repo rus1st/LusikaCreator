@@ -16,10 +16,6 @@ namespace TestApp.Models.Enums
 
         [Description("Изменить текст объекта")]
         [EnumMember(Value = "setObjectText")]
-        SetObjectText = 3,
-
-        [Description("Вызвать метод")]
-        [EnumMember(Value = "callFunction")]
-        CallFunction = 4
+        SetObjectText = 3
     }
 }

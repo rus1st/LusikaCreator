@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight;
 using TestApp.Models;
+using TestApp.Models.Config;
 using TestApp.Models.FormObjects;
 using TestApp.Models.Interfaces;
 using TestApp.Repository;
@@ -26,7 +27,7 @@ namespace TestApp.ViewModels.Controls
             set
             {
                 Set(ref _isRequired, value);
-                RaisePropertyChanged("Text");
+                RaisePropertyChanged(nameof(Text));
             }
         }
         private bool _isRequired;
@@ -42,7 +43,7 @@ namespace TestApp.ViewModels.Controls
 
         public void Refresh()
         {
-            RaisePropertyChanged("Text");
+            RaisePropertyChanged(nameof(Text));
         }
 
         public string Text
@@ -102,19 +103,44 @@ namespace TestApp.ViewModels.Controls
         {
         }
 
+        /// <summary>
+        /// Добавление нового объекта
+        /// </summary>
         public TextBoxViewModel(uint id, string name,
             IVariableWrapper variable,
             DataProvider dataProvider)
         {
             _objectsRepository = dataProvider.ObjectsRepository;
-            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode,
-                dataProvider.ObjectsRepository);
-            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository,
-                dataProvider.ObjectsRepository);
+            Properties = new ObjectBaseProperties(id, name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
+            ActionProperties = new ObjectActionProperties(variable, dataProvider.VariablesRepository, dataProvider.ObjectsRepository);
             ActionProperties.Variable.ValueChanged += OnValueChanged;
             Text = ActionProperties.Variable.StringValue;
             IsMultiline = false;
             IsRequired = false;
+        }
+
+        /// <summary>
+        /// Восстановление объекта из xml
+        /// </summary>
+        public TextBoxViewModel(TextBoxObject storedObj, DataProvider dataProvider)
+        {
+            _objectsRepository = dataProvider.ObjectsRepository;
+            var variablesRepository = dataProvider.VariablesRepository;
+
+            Properties = new ObjectBaseProperties(storedObj.Id, storedObj.Name, dataProvider.CommonSettings.AppMode, dataProvider.ObjectsRepository);
+            Properties.FontSettings.Update(storedObj.FontSettings);
+            IsRequired = storedObj.IsRequired;
+            IsMultiline = storedObj.IsMultiLine;
+
+            var variable = variablesRepository.Find(storedObj.VariableName);
+            if (variable != null)
+            {
+                variable.IsAssigned = true;
+                ActionProperties = new ObjectActionProperties(variable, variablesRepository, dataProvider.ObjectsRepository);
+                ActionProperties.Variable.ValueChanged += OnValueChanged;
+                Text = ActionProperties.Variable.StringValue;
+                ActionProperties.UpdateActions(storedObj.Actions);
+            }
         }
 
         private void OnValueChanged()
@@ -124,7 +150,7 @@ namespace TestApp.ViewModels.Controls
 
             if (_text == value) return;
             _text = value;
-            RaisePropertyChanged("Text");
+            RaisePropertyChanged(nameof(Text));
         }
 
         public void Update(IObjectViewModel buffer)

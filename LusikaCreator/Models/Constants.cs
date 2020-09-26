@@ -1,9 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Windows.Media;
 
 namespace TestApp.Models
 {
     public static class Constants
     {
+        public static SolidColorBrush DefaultColor = Brushes.Black;
+
         public static byte GridWidth = 7;
 
         public static string ExtName = "lus79";

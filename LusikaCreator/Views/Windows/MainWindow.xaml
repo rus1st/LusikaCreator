@@ -120,11 +120,6 @@
                         Command="{Binding ChangeVisibilityCommand}"
                         CommandParameter="{x:Type windows:VariablesViewerViewModel}">
                     </MenuItem>
-                    <MenuItem Header="Просмотр скриптов" IsCheckable="True"
-                        IsChecked="{Binding ElementName=This, Path=ViewModel.CommonSettings.ScriptsViewerSettings.IsVisible, Mode=TwoWay}"
-                        Command="{Binding ChangeVisibilityCommand}"
-                        CommandParameter="{x:Type windows:ScriptsViewerViewModel}">
-                    </MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="Действие" Height="30">

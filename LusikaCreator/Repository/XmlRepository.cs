@@ -80,7 +80,7 @@ namespace TestApp.Repository
             _dataProvider.TabsRepository.Clear();
             foreach (var tab in stor.Tabs) _dataProvider.TabsRepository.AddItem(tab);
 
-            
+            _dataProvider.TabsRepository.SelectedTabIndex = _dataProvider.TabsRepository.TabItems.First().Id;
             return true;
         }
 
@@ -160,66 +160,6 @@ namespace TestApp.Repository
             }
             catch
             {
-                return false;
-            }
-        }
-
-        public bool LoadScripts()
-        {
-            var appDataPath = Common.GetAppDataPath;
-            var fname = appDataPath + $@"\{Constants.ProjectName}\Scripts.xml";
-
-            if (!File.Exists(fname))
-            {
-                ErrorMessage = $"Файл не найден \"{fname}\"";
-                return false;
-            }
-
-            List<UserScript> scripts;
-            try
-            {
-                var serializer = new DataContractSerializer(typeof (List<UserScript>));
-
-                var fs = new FileStream(fname, FileMode.Open);
-                var reader = XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
-
-                scripts = (List<UserScript>) serializer.ReadObject(reader);
-                reader.Close();
-                fs.Close();
-            }
-            catch (Exception e)
-            {
-                ErrorMessage = $"Ошибка чтения: {e.Message}";
-                return false;
-            }
-
-            _dataProvider.ScriptsRepository.Scripts.Clear();
-            scripts.ForEach(t => _dataProvider.ScriptsRepository.AddScript(t));
-            return true;
-        }
-
-        public bool SaveScripts()
-        {
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var path = appDataPath + $@"\{Constants.ProjectName}\";
-            var fname = path + "Scripts.xml";
-            
-            var settings = new XmlWriterSettings {Indent = true};
-            try
-            {
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-                var serializer = new DataContractSerializer(typeof (List<UserScript>));
-                using (var writer = XmlWriter.Create(fname, settings))
-                {
-                    serializer.WriteObject(writer, _dataProvider.ScriptsRepository.Scripts.ToList());
-                }
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ErrorMessage = $"Ошибка сериализации: {e.Message}";
                 return false;
             }
         }
