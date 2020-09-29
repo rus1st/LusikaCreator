@@ -157,6 +157,7 @@
     <Compile Include="Models\FormObjects\DateBoxObject.cs" />
     <Compile Include="Models\FormObjects\RadioButtonObject.cs" />
     <Compile Include="Models\Helpers\TagReplacer.cs" />
+    <Compile Include="Models\Helpers\TimeNotifier.cs" />
     <Compile Include="Models\Interfaces\IFormObject.cs" />
     <Compile Include="Models\FormObjects\TextBoxObject.cs" />
     <Compile Include="Models\FormObjects\ComboBoxObject.cs" />

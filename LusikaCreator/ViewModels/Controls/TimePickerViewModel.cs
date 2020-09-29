@@ -104,6 +104,7 @@ namespace TestApp.ViewModels.Controls
             UpdateBindingTime();
             UseSeconds = timeWrapper.UseSeconds;
             IsRequired = false;
+            dataProvider.TimeNotifier.NewMinute += () => { Time = DateTime.Now.TimeOfDay; };
         }
 
         /// <summary>

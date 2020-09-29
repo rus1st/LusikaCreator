@@ -94,6 +94,8 @@ namespace TestApp.ViewModels.Controls
                 Date = ((DateVariableWrapper)ActionProperties.Variable).Value;
                 ActionProperties.UpdateActions(storedObj.Actions);
             }
+
+            dataProvider.TimeNotifier.NewDay += () => { Date = DateTime.Today; };
         }
 
         private void OnValueChanged()

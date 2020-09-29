@@ -2,6 +2,7 @@
 using TestApp.Models.Config;
 using TestApp.Repository;
 using TestApp.ViewModels.Helpers;
+using TestApp.Models.Helpers;
 
 namespace TestApp.Models
 {
@@ -25,6 +26,8 @@ namespace TestApp.Models
 
         public WindowsManager WindowsManager { get; }
 
+        public TimeNotifier TimeNotifier { get; }
+
 
         public DataProvider(AppMode appMode)
         {
@@ -42,6 +45,8 @@ namespace TestApp.Models
             DialogsManager = new DialogsManager(this);
             TabsRepository = new TabsRepository(this);
             WindowsManager = new WindowsManager(this);
+            TimeNotifier = new TimeNotifier();
+            TimeNotifier.StartWatching();
         }
 
         public bool SaveCommonSettings()
