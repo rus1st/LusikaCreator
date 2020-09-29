@@ -122,13 +122,13 @@ namespace TestApp.ViewModels.Controls
             var variable = variablesRepository.Find(storedObj.VariableName);
             if (variable != null)
             {
-                var timeWrapper = (TimeVariableWrapper)ActionProperties.Variable;
-                timeWrapper.IsAssigned = true;
-                ActionProperties = new ObjectActionProperties(timeWrapper, variablesRepository, dataProvider.ObjectsRepository);
+                var timeVariable = (TimeVariableWrapper)variable;
+                timeVariable.IsAssigned = true;
+                ActionProperties = new ObjectActionProperties(timeVariable, variablesRepository, dataProvider.ObjectsRepository);
                 ActionProperties.Variable.ValueChanged += OnValueChanged;
-                Time = timeWrapper.Value;
+                Time = timeVariable.Value;
                 UpdateBindingTime();
-                UseSeconds = timeWrapper.UseSeconds;
+                UseSeconds = timeVariable.UseSeconds;
                 ActionProperties.UpdateActions(storedObj.Actions);
             }
         }

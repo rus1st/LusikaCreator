@@ -12,8 +12,8 @@ namespace TestApp.Models
 
         public static string ProjectName = "Lusika Creator";
 
-        public static string Version = "1.0.1";
+        public static string Version = "1.0.2";
 
-        public static string LastUpdated = "10.08.2019";
+        public static string LastUpdated = "27.09.2020";
     }
 }
